@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公司项目利润计算器</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(to bottom, #f0f5ff, #e6ecff);
+            padding: 20px;
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 30px;
+            backdrop-filter: blur(5px);
+            border: 1px solid #d0d8e8;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4a6fc7, #3a56a0);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(74, 111, 199, 0.25);
+        }
+        
+        h1 {
+            font-size: 32px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+            letter-spacing: 1px;
+        }
+        
+        .input-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+        }
+        
+        label::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #4a6fc7;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        input {
+            padding: 14px;
+            border: 2px solid #4a6fc7;
+            border-radius: 10px;
+            font-size: 18px;
+            transition: all 0.3s;
+            background: #f8faff;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        input::placeholder {
+            color: #aaa;
+            font-weight: normal;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #3a56a0;
+            box-shadow: 0 0 0 4px rgba(74, 111, 199, 0.3);
+            background: #fff;
+        }
+        
+        .results-section {
+            display: grid;
+            grid-template-rows: auto auto auto;
+            gap: 25px;
+            margin-top: 25px;
+        }
+        
+        .result-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .result-row.single {
+            grid-template-columns: 1fr;
+        }
+        
+        .result-card {
+            background: linear-gradient(to bottom right, #f8faff, #eef2ff);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-left: 4px solid #4a6fc7;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .result-card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 8px;
+            height: 100%;
+            background: linear-gradient(to bottom, #4a6fc7, #3a56a0);
+        }
+        
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .result-title {
+            font-size: 18px;
+            color: #5a6c8d;
+            margin-bottom: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        
+        .result-title::before {
+            content: "";
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #4a6fc7;
+            margin-right: 8px;
+        }
+        
+        .result-value {
+            font-size: 26px;
+            font-weight: 700;
+            color: #2c3e50;
+            min-height: 40px;
+            line-height: 1.4;
+        }
+        
+        .unit {
+            font-size: 16px;
+            font-weight: normal;
+        }
+        
+        .highlight {
+            background: linear-gradient(135deg, #4a6fc7, #3a56a0);
+            color: white;
+            border-left: 4px solid #ffcc00;
+            grid-column: span 2;
+        }
+        
+        .highlight .result-title {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 20px;
+        }
+        
+        .highlight .result-title::before {
+            background: #ffcc00;
+        }
+        
+        .highlight .result-value {
+            color: white;
+            font-size: 32px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .input-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .result-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .highlight {
+                grid-column: span 1;
+            }
+            
+            h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>公司项目利润计算器</h1>
+        </div>
+        
+        <div class="input-section">
+            <div class="input-group">
+                <label for="participants">报名人数</label>
+                <input type="number" id="participants" min="0" placeholder="输入人数">
+            </div>
+            
+            <div class="input-group">
+                <label for="price">客单价 (元)</label>
+                <input type="number" id="price" min="0" value="1200">
+            </div>
+            
+            <div class="input-group">
+                <label for="cost">人工成本 (元)</label>
+                <input type="number" id="cost" min="0" value="4000">
+            </div>
+        </div>
+        
+        <div class="results-section">
+            <div class="result-row">
+                <div class="result-card">
+                    <div class="result-title">总营收</div>
+                    <div class="result-value" id="total-revenue">0</div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-title">机构合约期内总利润</div>
+                    <div class="result-value" id="institution-profit">0</div>
+                </div>
+            </div>
+            
+            <div class="result-row hidden" id="company-details-row">
+                <div class="result-card">
+                    <div class="result-title">公司总分成</div>
+                    <div class="result-value" id="company-share">0</div>
+                </div>
+                
+                <div class="result-card">
+                    <div class="result-title">公司总退款</div>
+                    <div class="result-value" id="company-refund">0</div>
+                </div>
+            </div>
+            
+            <div class="result-row single">
+                <div class="result-card highlight" id="company-profit-card">
+                    <div class="result-title">公司总利润</div>
+                    <div class="result-value" id="company-profit">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const participantsInput = document.getElementById('participants');
+        const priceInput = document.getElementById('price');
+        const costInput = document.getElementById('cost');
+        
+        const totalRevenueEl = document.getElementById('total-revenue');
+        const institutionProfitEl = document.getElementById('institution-profit');
+        const companyShareEl = document.getElementById('company-share');
+        const companyRefundEl = document.getElementById('company-refund');
+        const companyProfitEl = document.getElementById('company-profit');
+        const companyDetailsRow = document.getElementById('company-details-row');
+        const companyProfitCard = document.getElementById('company-profit-card');
+        
+        // 添加事件监听器
+        participantsInput.addEventListener('input', calculate);
+        priceInput.addEventListener('input', calculate);
+        costInput.addEventListener('input', calculate);
+        
+        // 初始化计算
+        calculate();
+        
+        // 计算函数
+        function calculate() {
+            // 获取输入值
+            const participants = parseFloat(participantsInput.value) || 0;
+            const price = parseFloat(priceInput.value) || 0;
+            const cost = parseFloat(costInput.value) || 0;
+            
+            // 计算总营收
+            const totalRevenue = participants * price * 36;
+            totalRevenueEl.textContent = formatNumber(totalRevenue);
+            
+            // 计算月营收和X值
+            const monthlyRevenue = participants * price;
+            const X = monthlyRevenue - cost;
+            
+            // 重置显示状态
+            companyDetailsRow.classList.add('hidden');
+            companyProfitCard.classList.remove('negative-unit');
+            
+            // 根据条件计算其他值
+            if (X < 0) {
+                // 条件1：X为负数
+                const monthlyLoss = X * 0.8;
+                const yearlyLoss = monthlyLoss * 36;
+                
+                // 机构利润显示：月亏损 + 三年亏损
+                institutionProfitEl.innerHTML = 
+                    formatNumber(monthlyLoss) + '<span class="unit">/月</span><br>' + 
+                    formatNumber(yearlyLoss) + '<span class="unit">/三年</span>';
+                
+                // 公司利润显示：月亏损 + 三年亏损
+                const companyMonthlyLoss = X * 0.2;
+                const companyYearlyLoss = companyMonthlyLoss * 36;
+                companyProfitEl.innerHTML = 
+                    formatNumber(companyMonthlyLoss) + '<span class="unit">/月</span><br>' + 
+                    formatNumber(companyYearlyLoss) + '<span class="unit">/三年</span>';
+                
+            } else {
+                // 条件2-8：X为正数
+                if (monthlyRevenue <= 5000) {
+                    // 条件2：月营收≤5000
+                    const institutionProfit = X * 36;
+                    institutionProfitEl.textContent = formatNumber(institutionProfit);
+                    
+                    // 公司利润为0时显示分成和退款行
+                    companyShareEl.textContent = '0';
+                    companyRefundEl.textContent = '0';
+                    companyProfitEl.textContent = '0';
+                    companyDetailsRow.classList.remove('hidden');
+                    
+                } else {
+                    // 条件3-8：月营收>5000
+                    const companyShare = totalRevenue * 0.2;
+                    companyShareEl.textContent = formatNumber(companyShare);
+                    
+                    let refundRate = 0;
+                    
+                    // 根据总营收范围确定退款比例
+                    if (totalRevenue > 500000) {
+                        // 条件3：总营收>500000
+                        refundRate = 0;
+                    } else if (totalRevenue > 400000) {
+                        // 条件4：400000<总营收≤500000
+                        refundRate = 0.2;
+                    } else if (totalRevenue > 300000) {
+                        // 条件5：300000<总营收≤400000
+                        refundRate = 0.4;
+                    } else if (totalRevenue > 200000) {
+                        // 条件6：200000<总营收≤300000
+                        refundRate = 0.6;
+                    } else if (totalRevenue > 150000) {
+                        // 条件7：150000<总营收≤200000
+                        refundRate = 0.8;
+                    } else {
+                        // 条件8：总营收≤150000
+                        refundRate = 1;
+                    }
+                    
+                    // 计算公司退款
+                    const companyRefund = companyShare * refundRate;
+                    companyRefundEl.textContent = formatNumber(companyRefund);
+                    
+                    // 计算公司利润
+                    const companyProfit = companyShare - companyRefund;
+                    companyProfitEl.textContent = formatNumber(companyProfit);
+                    
+                    // 计算机构利润
+                    let institutionProfit = 0;
+                    if (totalRevenue > 500000) {
+                        // 条件3
+                        institutionProfit = totalRevenue * 0.8 - cost * 36;
+                    } else {
+                        // 条件4-8
+                        institutionProfit = totalRevenue * 0.8 - cost * 36 + companyRefund;
+                    }
+                    institutionProfitEl.textContent = formatNumber(institutionProfit);
+                    
+                    // 显示公司分成和退款行
+                    companyDetailsRow.classList.remove('hidden');
+                }
+            }
+        }
+        
+        // 格式化数字显示（添加千位分隔符）
+        function formatNumber(num) {
+            if (isNaN(num)) return '0';
+            return num.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+    </script>
+</body>
+</html>
